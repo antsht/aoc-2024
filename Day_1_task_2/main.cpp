@@ -1,49 +1,44 @@
-#include <algorithm>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <unordered_map>
-#include <vector>
+
+void process_input_file(const char* fileName,
+                        std::function<void(int, int)> processingFunction);
 
 int main() {
   std::unordered_map<unsigned int, unsigned int> data;
 
-  {
-    std::ifstream inputFS("input");
-    if (inputFS.is_open()) {
-      int left, right;
-      while (inputFS >> left >> right) {
-        data[left] = 0;
-      }
-    } else {
-      std::cerr << "Error: Unable to open input file." << std::endl;
-      return 1;
-    }
-  }
+  process_input_file("input", [&data](int left, [[maybe_unused]] int right) {
+    data[left];
+  });
 
-  {
-    std::ifstream inputFS("input");
-    if (inputFS.is_open()) {
-      int left, right;
-      while (inputFS >> left >> right) {
-        // check if data[right] exists than increment value
-        if (data.contains(right)) {
-                  data[right]++;
-                }
-        
-
-      }
-    } else {
-      std::cerr << "Error: Unable to open input file." << std::endl;
-      return 1;
+  process_input_file("input", [&data]([[maybe_unused]] int left, int right) {
+    if (data.contains(right)) {
+      data[right]++;
     }
-  }
+  });
 
   u_int64_t result = 0;
-  for (const auto& [k, v] : data) {
-    result += k * v;
+  for (const auto& [key, value] : data) {
+    result += key * value;
   }
 
   std::cout << result << std::endl;
-
   return 0;
+}
+
+void process_input_file(const char* fileName,
+                        std::function<void(int, int)> processingFunction) {
+  {
+    std::ifstream inputFS(fileName);
+    if (inputFS.is_open()) {
+      int left, right;
+      while (inputFS >> left >> right) {
+        processingFunction(left, right);
+      }
+    } else {
+      throw std::runtime_error("Error: Unable to open input file.");
+    }
+  }
 }
