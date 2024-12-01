@@ -7,7 +7,7 @@ int main() {
     std::vector<int> leftColumn;
     std::vector<int> rightColumn;
     leftColumn.reserve(1000);
-    leftColumn.reserve(1000);
+    rightColumn.reserve(1000);
 
     std::ifstream inputFS("input");
     
