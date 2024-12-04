@@ -4,7 +4,8 @@
 #include <regex>
 #include <string>
 
-std::uint32_t countXMAS(const std::vector<std::string> &data, size_t i, size_t j);
+std::uint32_t countXMAS(const std::vector<std::string> &data, size_t i,
+                        size_t j);
 
 int main() {
   std::ifstream inputFS("./input");
@@ -32,46 +33,47 @@ int main() {
     }
   }
 
-
   std::cout << result << std::endl;
 
   return 0;
 }
 
-std::uint32_t countXMAS(const std::vector<std::string> &data, size_t i, size_t j){
+std::uint32_t countXMAS(const std::vector<std::string> &data, size_t i,
+                        size_t j) {
   std::uint32_t result = 0;
-//to the left
-if(j >= 3 && data[i][j-1] == 'M' && data[i][j-2] == 'A' && data[i][j-3] == 'S'){
-  ++result;
-}
-//to the right
-if(j < data[i].size()-3 && data[i][j+1] == 'M' && data[i][j+2] == 'A' && data[i][j+3] == 'S'){
-  ++result;
-}
-//to the up
-if(i >= 3 && data[i-1][j] == 'M' && data[i-2][j] == 'A' && data[i-3][j] == 'S'){
-  ++result;
-}
-//to the down
-if(i < data.size()-3 && data[i+1][j] == 'M' && data[i+2][j] == 'A' && data[i+3][j] == 'S'){
-  ++result;
-}
-//to the up-left
-if(i >= 3 && j >= 3 && data[i-1][j-1] == 'M' && data[i-2][j-2] == 'A' && data[i-3][j-3] == 'S'){
-  ++result;
-}
-//to the up-right
-if(i >= 3 && j < data[i].size()-3 && data[i-1][j+1] == 'M' && data[i-2][j+2] == 'A' && data[i-3][j+3] == 'S'){
-  ++result;
-}
-//to the down-left
-if(i < data.size()-3 && j >= 3 && data[i+1][j-1] == 'M' && data[i+2][j-2] == 'A' && data[i+3][j-3] == 'S'){
-  ++result;
-}
-//to the down-right
-if(i < data.size()-3 && j < data[i].size()-3 && data[i+1][j+1] == 'M' && data[i+2][j+2] == 'A' && data[i+3][j+3] == 'S'){
-  ++result;
-}
 
+  std::vector<std::pair<int, int>> directions = {
+      {0, -1},   // Left
+      {0, 1},    // Right
+      {-1, 0},   // Up
+      {1, 0},    // Down
+      {-1, -1},  // Up-Left
+      {-1, 1},   // Up-Right
+      {1, -1},   // Down-Left
+      {1, 1}     // Down-Right
+  };
+
+  const char expected[] = {'M', 'A', 'S'};
+
+  for (const auto &dir : directions) {
+    int di = dir.first;
+    int dj = dir.second;
+    bool valid = true;
+    for (int k = 1; k <= 3; ++k) {
+      size_t ni = i + di * k;
+      size_t nj = j + dj * k;
+      if (ni >= data.size() || nj >= data[ni].size()) {
+        valid = false;
+        break;
+      }
+      if (data[ni][nj] != expected[k - 1]) {
+        valid = false;
+        break;
+      }
+    }
+    if (valid) {
+      ++result;
+    }
+  }
   return result;
 }
