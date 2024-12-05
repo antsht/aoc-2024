@@ -1,8 +1,10 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <regex>
 #include <string>
+#include <vector>
+#include <array>
+#include <algorithm>
 
 std::uint32_t countX_MAS(const std::vector<std::string> &data, size_t i, size_t j);
 
@@ -38,20 +40,19 @@ int main() {
   return 0;
 }
 
-std::uint32_t countX_MAS(const std::vector<std::string> &data, size_t i, size_t j){
-  std::uint32_t result = 0;
-if (data[i-1][j-1] == 'M' && data[i+1][j+1] == 'S' && data[i-1][j+1] == 'M' && data[i+1][j-1] == 'S' ) {
-  ++result;
-}
-if (data[i-1][j-1] == 'S' && data[i+1][j+1] == 'M' && data[i-1][j+1] == 'M' && data[i+1][j-1] == 'S' ) {
-  ++result;
-}
-if (data[i-1][j-1] == 'M' && data[i+1][j+1] == 'S' && data[i-1][j+1] == 'S' && data[i+1][j-1] == 'M' ) {
-  ++result;
-}
-if (data[i-1][j-1] == 'S' && data[i+1][j+1] == 'M' && data[i-1][j+1] == 'S' && data[i+1][j-1] == 'M' ) {
-  ++result;
-}
+std::uint32_t countX_MAS(const std::vector<std::string> &data, size_t i,
+                         size_t j) {
+  const std::vector<std::array<char, 4>> patterns = {{'M', 'S', 'M', 'S'},
+                                                     {'S', 'M', 'M', 'S'},
+                                                     {'M', 'S', 'S', 'M'},
+                                                     {'S', 'M', 'S', 'M'}};
 
-  return result;
+  std::array<char, 4> actualChars = {
+      data[i - 1][j - 1],  // Top-left
+      data[i + 1][j + 1],  // Bottom-right
+      data[i - 1][j + 1],  // Top-right
+      data[i + 1][j - 1]   // Bottom-left
+  };
+
+  return std::count(patterns.begin(), patterns.end(), actualChars);
 }
