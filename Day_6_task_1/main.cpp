@@ -10,7 +10,6 @@ void move(int &row, int &col, int &dirRow, int &dirCol,
           std::vector<std::vector<char>> &dataMap);
 
 int main() {
-
   std::ifstream inputFS("./input");
   if (!inputFS.is_open()) {
     std::cerr << "Error: Unable to open input file." << std::endl;
@@ -37,23 +36,27 @@ int main() {
   }
   inputFS.close();
 
-  for (size_t i = 0; i < 5000; ++i) {
+  while ((startRow + dirRow) >= 0 &&
+         (startRow + dirRow) < static_cast<int>(dataMap.size()) &&
+         (startCol + dirCol) >= 0 &&
+         (startCol + dirCol) < static_cast<int>(dataMap.size())
+         ) {
     move(startRow, startCol, dirRow, dirCol, dataMap);
   }
   // print dataMap
+  // print start coords
+  std::cout << "startRow: " << startRow << std::endl;
+  std::cout << "startCol: " << startCol << std::endl;
+  std::cout << dataMap[startRow][startCol] << std::endl;
+
   for (const auto &row : dataMap) {
     for (const auto &c : row) {
       std::cout << c;
     }
     std::cout << std::endl;
   }
-  // print start coords
-  std::cout << "startRow: " << startRow << std::endl;
-  std::cout << "startCol: " << startCol << std::endl;
-  std::cout << dataMap[startRow][startCol] << std::endl;
-
   // count all 'X' in dataMap
-  int count = 0;
+  int count = 1;
   for (const auto &row : dataMap) {
     for (const auto &c : row) {
       if (c == 'X') {
@@ -85,10 +88,7 @@ void rotateRight(int &rowDir, int &colDir) {
 void move(int &row, int &col, int &dirRow, int &dirCol,
           std::vector<std::vector<char>> &dataMap) {
   dataMap[row][col] = 'X';
-  if (dataMap[row + dirRow][col + dirCol] == '#' || (row + dirRow) < 0 ||
-      (row + dirRow) >= (static_cast<int>(dataMap.size()) - 1) ||
-      (col + dirCol) < 0 ||
-      (col + dirCol) >= (static_cast<int>(dataMap.size()) - 1)) {
+  if (dataMap[row + dirRow][col + dirCol] == '#') {
     rotateRight(dirRow, dirCol);
   } else {
     row += dirRow;
