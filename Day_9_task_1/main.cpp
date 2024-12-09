@@ -6,9 +6,11 @@
 #include <vector>
 
 using valueType = std::uint64_t;
+void printData(const std::vector<int> &data);
+valueType calculateCheckSum(const std::vector<int> &data);
 
 int main() {
-  std::ifstream inputFS("./input_test");
+  std::ifstream inputFS("./input");
   if (!inputFS.is_open()) {
     std::cerr << "Error: Unable to open input file." << std::endl;
     return 1;
@@ -18,15 +20,10 @@ int main() {
   char currentValue;
   bool isFile = true;
   int currentFileNumber = 0;
-  // read the data from the file containing one line of numbers as single chars
-  // and convert it to a vector of integers
- 
-
-
 
   while (inputFS >> currentValue) {
-    if(isFile){
-      for (int i = 0; i < currentValue-'0'; i++) {
+    if (isFile) {
+      for (int i = 0; i < currentValue - '0'; i++) {
         data.push_back(currentFileNumber);
       }
       ++currentFileNumber;
@@ -39,12 +36,47 @@ int main() {
   }
   inputFS.close();
 
+  printData(data);
+
+  auto itLeft = data.begin();
+  auto itRight = data.end() - 1;
+  while (*itRight == -1) {
+    --itRight;
+  }
+  while (itLeft < itRight) {
+    if (*itLeft == -1) {
+      std::swap(*itLeft, *itRight);
+      ++itLeft;
+      while (*itRight == -1) {
+        --itRight;
+      }
+      continue;
+    }
+    ++itLeft;
+  }
+  std::cout << std::endl;
+  printData(data);
+  std::cout << calculateCheckSum(data) << std::endl;
+  return 0;
+}
+
+void printData(const std::vector<int> &data) {
   for (auto i : data) {
-    if(i==-1){
-    std::cout << '.';} else {
-    std::cout << i;
+    if (i == -1) {
+      std::cout << ".";
+    } else {
+      std::cout << i;
     }
   }
+  std::cout << std::endl;
+}
 
-  return 0;
+valueType calculateCheckSum(const std::vector<int> &data) {
+  valueType checkSum = 0;
+  for (size_t i = 0; i < data.size(); ++i) {
+    if (data[i] != -1) {
+      checkSum += i * data[i];
+    }
   }
+  return checkSum;
+}
