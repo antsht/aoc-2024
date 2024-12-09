@@ -1,13 +1,14 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
 
 void rotateRight(int &rowDir, int &colDir);
-void move(int &row, int &col, int &dirRow, int &dirCol,
-          std::vector<std::vector<char>> &dataMap);
+bool move(int &row, int &col, int &dirRow, int &dirCol,
+          const std::vector<std::vector<char>> &dataMap);
 
 int main() {
   std::ifstream inputFS("./input");
@@ -30,23 +31,47 @@ int main() {
       if (c == '^') {
         startCol = lineData.size() - 1;
         startRow = dataMap.size();
+        // print
+        std::cout << "Start: " << startRow << " " << startCol << std::endl;
       }
     }
     dataMap.push_back(lineData);
   }
   inputFS.close();
 
-  while ((startRow + dirRow) >= 0 &&
-         (startRow + dirRow) < static_cast<int>(dataMap.size()) &&
-         (startCol + dirCol) >= 0 &&
-         (startCol + dirCol) < static_cast<int>(dataMap.size())
-         ) {
-    move(startRow, startCol, dirRow, dirCol, dataMap);
+  int sentinelsCount = 0;
+  int maxSteps = dataMap.size() * dataMap[0].size()*40;
+
+  for (size_t r = 0; r < dataMap.size(); ++r) {
+    for (size_t c = 0; c < dataMap[0].size(); ++c) {
+      if (dataMap[r][c] == '.') {
+        dataMap[r][c] = '#';
+        int row = startRow;
+        int col = startCol;
+        dirRow = -1;
+        dirCol = 0;
+        int steps = maxSteps;
+        while ((row + dirRow) >= 0 &&
+               (row + dirRow) < static_cast<int>(dataMap.size()) &&
+               (col + dirCol) >= 0 &&
+               (col + dirCol) < static_cast<int>(dataMap[0].size())) {
+          move(row, col, dirRow, dirCol, dataMap);
+          if (--steps == 0) {
+            ++sentinelsCount;
+            std::cout << "Found: " << r << " : " << c << "Total: "
+                      << sentinelsCount << std::endl;
+            break;
+          }
+        }
+
+        dataMap[r][c] = '.';
+      }
+    }
   }
-  // print dataMap
   // print start coords
   std::cout << "startRow: " << startRow << std::endl;
   std::cout << "startCol: " << startCol << std::endl;
+  // print dataMap
   std::cout << dataMap[startRow][startCol] << std::endl;
 
   for (const auto &row : dataMap) {
@@ -55,17 +80,9 @@ int main() {
     }
     std::cout << std::endl;
   }
-  // count all 'X' in dataMap
-  int count = 1;
-  for (const auto &row : dataMap) {
-    for (const auto &c : row) {
-      if (c == 'X') {
-        ++count;
-      }
-    }
-  }
+  // print result
+  std::cout << sentinelsCount << std::endl;
 
-  std::cout << count << std::endl;
   return 0;
 }
 
@@ -85,13 +102,15 @@ void rotateRight(int &rowDir, int &colDir) {
   }
 }
 
-void move(int &row, int &col, int &dirRow, int &dirCol,
-          std::vector<std::vector<char>> &dataMap) {
-  dataMap[row][col] = 'X';
+bool move(int &row, int &col, int &dirRow, int &dirCol,
+          const std::vector<std::vector<char>> &dataMap) {
   if (dataMap[row + dirRow][col + dirCol] == '#') {
     rotateRight(dirRow, dirCol);
+
+    return true;
   } else {
     row += dirRow;
     col += dirCol;
   }
+  return false;
 }
