@@ -59,9 +59,9 @@ void printData(const std::vector<std::vector<int>> &data) {
 
 int calculateScore(const std::vector<std::vector<int>> &data, int startRow,
                    int startCol) {
-  std::set<std::pair<int, int>> startPoints;
+  std::multiset<std::pair<int, int>> startPoints;
   startPoints.insert({startRow, startCol});
-  std::set<std::pair<int, int>> endPoints;
+  std::multiset<std::pair<int, int>> endPoints;
   for (int i = 1; i <= 9; ++i) {
     endPoints.clear();
     for (auto &point : startPoints) {
