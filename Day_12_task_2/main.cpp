@@ -18,7 +18,7 @@ valueType calcFence(const std::vector<std::string> &data);
 valueType calcCorners(const std::vector<std::string> &data, valueType row, valueType col);
 
 int main() {
-  std::ifstream inputFS("./input_test");
+  std::ifstream inputFS("./input");
   if (!inputFS.is_open()) {
     std::cerr << "Error: Unable to open input file." << std::endl;
     return 1;
@@ -40,8 +40,9 @@ int main() {
               auto [area, perimeter] = calculateAreaAndPerimeter(dataTmp, row, col, data[row][col]);
               // printData(dataTmp);
               std::cout << "Area: " << area << ", Perimeter: " << perimeter << std::endl;
-              std::cout << "Corners: " << calcFence(dataTmp) << std::endl;
-              result += area * perimeter;
+              valueType fences = calcFence(dataTmp);
+              std::cout << "Corners: " << fences << std::endl;
+              result += area * fences;
               markVisited(data, dataTmp);
           }
       }
@@ -147,7 +148,7 @@ xTx
 x T
 xxx
 */
-if ((row==0 || data[row-1][col]!=' ') && (col==data[0].size()-1 || data[row][col+1]!=' ')){
+if ((row==0 || data[row-1][col]!=' ') && (col==(data[0].size()-1) || data[row][col+1]!=' ')){
   ++result;
 }
 /*
@@ -174,7 +175,8 @@ x x
   x
 xxx
 */
-if (row>0 && data[row-1][col]==' ' && col>0 && data[row][col-1]==' '){
+if (row > 0 && col > 0 && data[row - 1][col] == ' ' &&
+    data[row][col - 1] == ' ' && data[row-1][col-1] != ' ') {
   ++result;
 }
 /*
@@ -182,7 +184,8 @@ x x
 x  
 xxx
 */
-if ((row>0 || data[row-1][col]==' ') && (col<data[0].size()-1 && data[row][col+1]==' ')){
+if (row > 0 &&  (col < data[0].size() - 1) && data[row - 1][col] == ' ' &&
+    data[row][col + 1] == ' ' && data[row - 1][col + 1] != ' ') {
   ++result;
 }
 /*
@@ -190,7 +193,9 @@ xxx
   x
 x x
 */
-if ((row<data.size()-1 && data[row+1][col]==' ') && (col>0 && data[row][col-1]==' ')){
+if ((row < data.size() - 1) && col > 0 &&
+    data[row][col-1] == ' ' && data[row+1][col] == ' ' &&
+    data[row + 1][col - 1] != ' ') {
   ++result;
 }
 /*
@@ -198,10 +203,11 @@ xxx
 x  
 x x
 */
-if ((row<data.size()-1 && data[row+1][col]==' ') && (col<data[0].size()-1 && data[row][col+1]==' ')){
+if ((row < data.size() - 1) && (col < data[0].size() - 1) &&
+    data[row][col + 1] == ' ' && data[row + 1][col] == ' ' &&
+    data[row + 1][col + 1] != ' ') {
   ++result;
 }
-
 
 return result;
 }
