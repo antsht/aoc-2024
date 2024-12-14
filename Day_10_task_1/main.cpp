@@ -69,21 +69,20 @@ int calculateScore(const std::vector<std::vector<int>> &data, int startRow,
           data[point.first + 1][point.second] == i) {
         endPoints.insert({point.first + 1, point.second});
       }
-      if ((point.first - 1) >= 0 &&
-          data[point.first - 1][point.second] == i) {
+      if ((point.first - 1) >= 0 && data[point.first - 1][point.second] == i) {
         endPoints.insert({point.first - 1, point.second});
       }
       if ((point.second + 1) < static_cast<int>(data[0].size()) &&
           data[point.first][point.second + 1] == i) {
         endPoints.insert({point.first, point.second + 1});
       }
-      if ((point.second - 1) >= 0 &&
-          data[point.first][point.second - 1] == i) {
+      if ((point.second - 1) >= 0 && data[point.first][point.second - 1] == i) {
         endPoints.insert({point.first, point.second - 1});
       }
     }
     startPoints = endPoints;
   }
-  std::cout << "Point: " << startRow << ", " << startCol << " Rank: "<< startPoints.size() << std::endl;
+  std::cout << "Point: " << startRow << ", " << startCol
+            << " Rank: " << startPoints.size() << std::endl;
   return startPoints.size();
 }
