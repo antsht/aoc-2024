@@ -32,7 +32,7 @@ Feel free to contribute if you have any improvements or alternative solutions. P
 | 12 | :star2::star2: |
 | 13 | :star2::star2: |
 | 14 | :star2::star2: |
-| 15 |  |
+| 15 | :star2::star2: |
 | 16 |  |
 | 17 |  |
 | 18 |  |
