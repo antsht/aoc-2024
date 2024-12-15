@@ -17,17 +17,40 @@ bool moveBoxUp(int box_row, int box_col,
                std::vector<std::vector<char>> &dataMap);
 bool moveBoxDown(int box_row, int box_col,
                  std::vector<std::vector<char>> &dataMap);
+std::vector<std::vector<char>> loadMap(const std::string &filename,
+                                       int &robotRow, int &robotCol);
+std::vector<char> loadMoves(const std::string &filename);
 
 int main() {
-  std::ifstream inputFS("./input");
-  if (!inputFS.is_open()) {
-    std::cerr << "Error: Unable to open input file." << std::endl;
-    return 1;
+  int robotRow = 0, robotCol = 0;
+
+  // Load map and moves
+  auto dataMap = loadMap("./input", robotRow, robotCol);
+  auto dataMoves = loadMoves("./input_moves");
+
+  printMap(dataMap);
+  for (char direction : dataMoves) {
+    move(robotRow, robotCol, direction, dataMap);
+
+    //printMap(dataMap);
   }
-  std::string line;
-  int robotRow = 0;
-  int robotCol = 0;
+
+  printMap(dataMap);
+
+  std::cout << calculateGPS(dataMap) << std::endl;
+  return 0;
+}
+
+// Load map from file
+std::vector<std::vector<char>> loadMap(const std::string &filename,
+                                       int &robotRow, int &robotCol) {
+  std::ifstream inputFS(filename);
+  if (!inputFS.is_open()) {
+    throw std::runtime_error("Error: Unable to open input file.");
+  }
+
   std::vector<std::vector<char>> dataMap;
+  std::string line;
   while (std::getline(inputFS, line)) {
     std::stringstream lineStream(line);
     std::vector<char> lineData;
@@ -49,31 +72,22 @@ int main() {
     }
     dataMap.push_back(lineData);
   }
-  inputFS.close();
+  return dataMap;
+}
 
-  std::vector<char> dataMoves;
-  std::ifstream inputFSMove("./input_moves");
-  if (!inputFSMove.is_open()) {
-    std::cerr << "Error: Unable to open input file." << std::endl;
-    return 1;
+// Load moves from file
+std::vector<char> loadMoves(const std::string &filename) {
+  std::ifstream inputFS(filename);
+  if (!inputFS.is_open()) {
+    throw std::runtime_error("Error: Unable to open input file.");
   }
+
+  std::vector<char> moves;
   char c;
-  while (inputFSMove >> c) {
-    dataMoves.push_back(c);
+  while (inputFS >> c) {
+    moves.push_back(c);
   }
-  inputFSMove.close();
-
-  printMap(dataMap);
-  for (char direction : dataMoves) {
-    move(robotRow, robotCol, direction, dataMap);
-
-    //printMap(dataMap);
-  }
-
-  printMap(dataMap);
-
-  std::cout << calculateGPS(dataMap) << std::endl;
-  return 0;
+  return moves;
 }
 
 void move(int &row, int &col, char direction,
