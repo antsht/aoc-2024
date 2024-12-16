@@ -1,42 +1,41 @@
-#include <cstdint>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
 
-void printMap(std::vector<std::vector<uint32_t>> &dataMap);
-std::vector<std::vector<uint32_t>> loadMap(const std::string &filename,
-                                       uint32_t &startRow, uint32_t &startCol, uint32_t &endRow, uint32_t &endCol);
+#include "main.hpp"
 
 int main() {
-  uint32_t startRow = 0;
-  uint32_t startCol = 0;
-  uint32_t endRow = 0;
-  uint32_t endCol = 0;
+    std::pair<int, int> start, end;
 
-  // Load map and moves
-  auto dataMap = loadMap("./input_test_s", startRow, startCol, endRow, endCol);
+    // Load map and moves
+    auto dataMap = loadMap("./input", start.first, start.second, end.first, end.second);
 
-  printMap(dataMap);
- 
+    printMap(dataMap);
+
+
+
+    int result = findMinCost(dataMap, start, end);
+
+    if (result != -1) {
+        std::cout << "Cheapest route: " << result << std::endl;
+  } else {
+    std::cout << "There is no route" << std::endl;
+  }
+
   return 0;
 }
 
 // Load map from file
-std::vector<std::vector<uint32_t>> loadMap(const std::string &filename,
+std::vector<std::vector<int>> loadMap(const std::string &filename,
                                        
-                                       uint32_t &startRow, uint32_t &startCol, uint32_t &endRow, uint32_t &endCol) {
+                                       int &startRow, int &startCol, int &endRow, int &endCol) {
   std::ifstream inputFS(filename);
   if (!inputFS.is_open()) {
     throw std::runtime_error("Error: Unable to open input file.");
   }
 
-  std::vector<std::vector<uint32_t>> dataMap;
+  std::vector<std::vector<int>> dataMap;
   std::string line;
   while (std::getline(inputFS, line)) {
     std::stringstream lineStream(line);
-    std::vector<uint32_t> lineData;
+    std::vector<int> lineData;
     char c;
     while (lineStream >> c) {
       if (c == 'S') {
@@ -58,7 +57,7 @@ std::vector<std::vector<uint32_t>> loadMap(const std::string &filename,
   return dataMap;
 }
 
-void printMap(std::vector<std::vector<uint32_t>> &dataMap) {
+void printMap(std::vector<std::vector<int>> &dataMap) {
   for (const auto &row : dataMap) {
     for (const auto &cell : row) {
       if (cell == 0) {
@@ -70,4 +69,67 @@ void printMap(std::vector<std::vector<uint32_t>> &dataMap) {
     std::cout << std::endl;
   }
   std::cout << std::endl;
+}
+
+
+
+int findMinCost(const std::vector<std::vector<int>> &grid,
+                std::pair<int, int> start, std::pair<int, int> end) {
+  int rows = grid.size();
+  int cols = grid[0].size();
+
+  // Set minimum cost for each cell and direction to infinity
+  std::vector<std::vector<std::vector<int>>> minCost(
+      rows, std::vector<std::vector<int>>(cols, std::vector<int>(4, INF)));
+
+  std::priority_queue<State, std::vector<State>, std::greater<State>> pq;
+
+  // Push starting point with direction to the right as required
+  pq.push({start.first, start.second, 1, 0});
+  minCost[start.first][start.second][1] = 0;
+
+  while (!pq.empty()) {
+    State current = pq.top();
+    pq.pop();
+
+    int x = current.x;
+    int y = current.y;
+    int dir = current.direction;
+    int cost = current.cost;
+
+    // finish is found, return the cost
+    if (x == end.first && y == end.second) {
+      return cost;
+    }
+
+    // Skip if the cost is higher than the minimum cost for this cell and
+    // direction
+    if (cost > minCost[x][y][dir]) {
+      continue;
+    }
+
+    // Iterate over neighbors
+    for (int new_dir = 0; new_dir < 4; ++new_dir) {
+      int nx = x + directions[new_dir].first;
+      int ny = y + directions[new_dir].second;
+
+      // Skip if out of bounds or obstacle
+      if (nx < 0 || ny < 0 || nx >= rows || ny >= cols || grid[nx][ny] == 0) {
+        continue;
+      }
+
+      // Calculate cost for moving to the new cell
+      int turnCost = (dir == new_dir) ? 0 : TURN_COST;
+      int newCost = cost + STEP_COST + turnCost;
+
+      // Update the minimum cost if it's lower
+      if (newCost < minCost[nx][ny][new_dir]) {
+        minCost[nx][ny][new_dir] = newCost;
+        pq.push({nx, ny, new_dir, newCost});
+      }
+    }
+  }
+
+  // If path is not found
+  return -1;
 }
