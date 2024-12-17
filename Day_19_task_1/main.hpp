@@ -7,7 +7,9 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <unordered_set>
 
-void loadData(const std::string &filename, std::set<std::string> &flags, std::vector<std::string> &patterns);
-
-#endif // MAIN_HPP
+void loadData(const std::string &filename, std::vector<std::string> &flags, std::vector<std::string> &patterns);
+uint64_t countWaysToMakeWord(const std::string &word,
+                            const std::vector<std::string> &tokens);
+#endif  // MAIN_HPP

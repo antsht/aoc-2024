@@ -36,7 +36,7 @@ Feel free to contribute if you have any improvements or alternative solutions. P
 | 16 | :star2::star2: |
 | 17 | :star2::star2: |
 | 18 | :star2::star2: |
-| 19 |  |
+| 19 | :star2::star2: |
 | 20 |  |
 | 21 |  |
 | 22 |  |
