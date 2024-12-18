@@ -33,9 +33,9 @@ Feel free to contribute if you have any improvements or alternative solutions. P
 | 13 | :star2::star2: |
 | 14 | :star2::star2: |
 | 15 | :star2::star2: |
-| 16 |  |
-| 17 |  |
-| 18 |  |
+| 16 | :star2::star2: |
+| 17 | :star2::star2: |
+| 18 | :star2::star2: |
 | 19 |  |
 | 20 |  |
 | 21 |  |
