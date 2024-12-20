@@ -2,48 +2,49 @@
 #include "main.hpp"
 
 int main() {
-    std::pair<int, int> start, end;
+  std::pair<int, int> start, end;
 
-    // Load map and moves
-    auto dataMap = loadMap("./input", start.first, start.second, end.first, end.second);
+  // Load map and moves
+  auto dataMap =
+      loadMap("./input", start.first, start.second, end.first, end.second);
 
-    printMap(dataMap);
+  printMap(dataMap);
 
+  int result = findMinCost(dataMap, start, end);
 
-
-    int result = findMinCost(dataMap, start, end);
-
-    if (result != -1) {
-        std::cout << "Cheapest route: " << result << std::endl;
+  if (result != -1) {
+    std::cout << "Cheapest route: " << result << std::endl;
   } else {
     std::cout << "There is no route" << std::endl;
   }
   size_t goodImprovements = 0;
-  for (size_t i = 1; i < dataMap.size()-1; ++i) {
+  for (size_t i = 1; i < dataMap.size() - 1; ++i) {
     for (size_t j = 1; j < dataMap[i].size() - 1; ++j) {
       if (dataMap[i][j] == 0) {
-        auto mapCopy = dataMap;
-        mapCopy[i][j] = 1;
-        int newResult = findMinCost(mapCopy, start, end);
+        dataMap[i][j] = 1;
+        int newResult = findMinCost(dataMap, start, end);
+        dataMap[i][j] = 0;
         if (newResult != -1 && newResult < result) {
-          std::cout << "i: " << i << " j: " << j << " Improvement: " << result-newResult
-                    << std::endl;
-                    if (result - newResult >=100) {
-                      goodImprovements++;
-                    }
-        }     
+          // std::cout << "i: " << i << " j: " << j << " Improvement: " <<
+          // result-newResult
+          //          << std::endl;
+          if (result - newResult >= 100) {
+            goodImprovements++;
+          }
+        }
       }
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
   }
-std::cout << "Good improvements: " << goodImprovements << std::endl;
+  std::cout << "Good improvements: " << goodImprovements << std::endl;
   return 0;
 }
 
 // Load map from file
 std::vector<std::vector<int>> loadMap(const std::string &filename,
-                                       
-                                       int &startRow, int &startCol, int &endRow, int &endCol) {
+
+                                      int &startRow, int &startCol, int &endRow,
+                                      int &endCol) {
   std::ifstream inputFS(filename);
   if (!inputFS.is_open()) {
     throw std::runtime_error("Error: Unable to open input file.");
@@ -79,8 +80,8 @@ void printMap(std::vector<std::vector<int>> &dataMap) {
   for (const auto &row : dataMap) {
     for (const auto &cell : row) {
       if (cell == 0) {
-        std::cout << '#';}
-        else {
+        std::cout << '#';
+      } else {
         std::cout << '.';
       }
     }
@@ -88,8 +89,6 @@ void printMap(std::vector<std::vector<int>> &dataMap) {
   }
   std::cout << std::endl;
 }
-
-
 
 int findMinCost(const std::vector<std::vector<int>> &grid,
                 std::pair<int, int> start, std::pair<int, int> end) {
