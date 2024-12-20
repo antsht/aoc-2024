@@ -23,4 +23,6 @@ std::vector<std::vector<int>> loadMap(const std::string &filename,
                                       int &startRow, int &startCol, int &endRow,
                                       int &endCol);
 
+int manhattanDistance(std::pair<int, int> start, std::pair<int, int> end);
+
 #endif // MAIN_HPP
